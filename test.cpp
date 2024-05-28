@@ -32,7 +32,7 @@ int main()
     int max_iteration = 10000;
     double tol = 1e-4;
     vec<double> x_cg = cg(A,x,b,max_iteration,tol);
-    vec<double> x_pcg = cg(A,x,b,max_iteration,tol);
+    vec<double> x_pcg = pcg(A,x,b,max_iteration,tol);
     vec<double> x_ge = gausselimination(A,b);
 
     x_cg.display("x_cg");
