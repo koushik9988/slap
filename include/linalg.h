@@ -384,7 +384,7 @@ Declaration of methods of vector class
 template <typename T>
 vec<T>::vec(int size) : size(size)
 {
-    arr1 = new double[size];
+    arr1 = new T[size];
     for( int i =0 ; i < size ; i++)
     {
         arr1[i] = 0;
