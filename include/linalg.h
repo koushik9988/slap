@@ -15,25 +15,81 @@
 template <typename T>
 class vec;
 
+
+/**
+ * @class Matrix
+ * @brief Class for representing a 2D matrix and performing various matrix operations through operator overloading.
+ * @tparam T The type of elements stored in the matrix (e.g., double, float, int).
+ */
 template <typename T>
 class Matrix
 {
 public:
+
+    /**
+     * @brief Constructor for the Matrix template class.
+     * @param row number of rows.
+     * @param  col number of column.
+     */
     Matrix(int row, int col);
+    /**
+     * @brief Default constructor for Matrix.
+     */
+    Matrix();
+    /**
+     * @brief Copy constructor for Matrix class.
+     * @param other The matrix to copy from.
+     */
     Matrix(Matrix<T> &other);
+    /**
+     * @brief Assignment operator for Matrix.
+     * @param other The matrix to assign from.
+     * @return Reference to the assigned matrix.
+     */
     Matrix& operator=(Matrix<T> &other);
+    /**
+     * @brief Addition operator for Matrix.
+     * @param other The matrix to add.
+     * @return A new matrix which is the sum of the current matrix and the other matrix.
+     */
     Matrix<T> operator+(const Matrix<T> &other) const;
+    /**
+     * @brief Subtraction operator for Matrix.
+     * @param other The matrix to subtract.
+     * @return A new matrix which is the difference between the current matrix and the other matrix.
+     */
     Matrix<T> operator-(const Matrix<T> &other)const;
+    /**
+     * @brief Multiplication operator for Matrix.
+     * @param other The matrix to multiply.
+     * @return A new matrix which is the product of the current matrix and the other matrix.
+     */
     Matrix<T> operator*(const Matrix<T> &other)const;
+    /**
+     * @brief Multiplication operator for Matrix and vector.
+     * @param v The vector to multiply.
+     * @return A new vector which is the product of the current matrix and the vector.
+     */
     vec<T> operator*(const vec<T> &v)const;
+    /**
+     * @brief Method to input elements into the matrix.
+     */
     void input();
+    /**
+     * @brief Overloaded function call operator to access matrix elements.
+     * @param n Row index.
+     * @param m Column index.
+     * @return Reference to the element at (n, m).
+     */
     T& operator()(int n, int m);
     void display();
-    void display(std::string name);
 
     Matrix(Matrix&& other) noexcept;
     Matrix& operator=(Matrix&& other) noexcept;
 
+    /**
+     * @brief Destructor for Matrix.
+     */
     ~Matrix();
 
     //-------friend function ----------------------------
@@ -62,11 +118,19 @@ public:
     friend vec<U> flatten(Matrix<U> M);
 
 private:
+    /// number of rows
     int row;
+    /// number of column
     int col;
     T **arr2;
 };
 
+
+/**
+ * @class vec
+ * @brief Class for representing a vector and performing various vector operations.
+ * @tparam T The type of elements stored in the vector (e.g., double, float, int).
+ */
 template <typename T>
 class vec
 {
@@ -74,7 +138,7 @@ public:
     vec(int size);
     vec();
     //vec() : arr1(nullptr), size(0) {}
-    vec(vec<T> &other);
+    vec(const vec<T> &other);
     vec& operator=(vec<T> &other);
     //Assignment operator to set all elements to a single value
     vec& operator=(const T& value); 
@@ -82,15 +146,18 @@ public:
     vec<T> operator-(const vec<T> &other) const;
     T operator*(const vec<T> &other) const;
     vec<T> &operator/=(double scalar);
+    vec<T> &operator += (const vec<T> &other);
     vec<T> operator/(double scalar) const;
     vec<T> operator*(double scalar);
     void display();
-    void display(std::string name);
     void set(double value);
     T& operator()(int n);
     double norm();
     int getSize();
+    void clear();
+    void Scatter(double lc , double spwt);
     ~vec();
+    
 
     vec(vec&& other) noexcept;
     vec& operator=(vec&& other) noexcept;
@@ -143,6 +210,11 @@ Matrix<T>::Matrix(int row, int col) : row(row), col(col)
         }
     }
 }
+
+
+// Default constructor that takes no argument
+template <typename T>
+Matrix<T>::Matrix() : row(0), col(0), arr2(nullptr) {}
 
 template <typename T>
 Matrix<T>::Matrix(Matrix<T> &other) : row(other.row), col(other.col)
@@ -312,22 +384,6 @@ void Matrix<T>::display()
 }
 
 template <typename T>
-void Matrix<T>::display(std::string name)
-{
-    std::cout << std::fixed << std::setprecision(2);
-    std::cout << "displaying matrix :"<<name<< std::endl;
-    for (int i = 0; i < row; i++)
-    {
-        for (int j = 0; j < col; j++)
-        {
-            std::cout << arr2[i][j] << "\t";
-        }
-        std::cout << std::endl;
-    }
-    std::cout << "-------------------------------------------" << std::endl;
-}
-
-template <typename T>
 Matrix<T>::~Matrix()
 {
     for (int i = 0; i < row; ++i)
@@ -391,12 +447,14 @@ vec<T>::vec(int size) : size(size)
     }
 }
 
-
+//dafault constructor
 template <typename T>
-vec<T>::vec() : arr1(nullptr), size(0) {}
+vec<T>::vec() : size(0),arr1(nullptr) {}
 
+
+//copy constructor
 template <typename T>
-vec<T>::vec(vec<T> &other) : size(other.size)
+vec<T>::vec( const vec<T> &other) : size(other.size)
 {
     arr1 = new T[size];
     std::copy(other.arr1, other.arr1 + size, arr1);
@@ -441,12 +499,26 @@ vec<T> vec<T>::operator+( const vec<T> &other)const
     }
 
     vec result(size);
-    for (int i = 0; i < size; ++i)
+    for (int i = 0; i < size; i++)
     {
         result.arr1[i] = arr1[i] + other.arr1[i];
     }
     return result;
 }
+
+//%%%%%%%%%%%%%%%%%%%%
+/*increments values by data from another field*/
+template <typename T>
+vec<T> &vec<T>::operator += (const vec<T> &other)
+{
+    for(int i = 0;i < size; i++)
+    {
+        arr1[i] += other.arr1[i];
+    }
+					
+	return (*this);
+}
+//%%%%%%%%%%%%%%%%%%%%%
 
 template <typename T>
 vec<T> vec<T>::operator-(const  vec<T> &other)const 
@@ -457,7 +529,7 @@ vec<T> vec<T>::operator-(const  vec<T> &other)const
     }
 
     vec result(size);
-    for (int i = 0; i < size; ++i)
+    for (int i = 0; i < size; i++)
     {
         result.arr1[i] = arr1[i] - other.arr1[i];
     }
@@ -473,7 +545,7 @@ T vec<T>::operator*(const  vec<T> &other)const
     }
 
     T result = 0;
-    for (int i = 0; i < size; ++i)
+    for (int i = 0; i < size; i++)
     {
         result += arr1[i] * other.arr1[i];
     }
@@ -484,7 +556,7 @@ template <typename T>
 vec<T> vec<T>::operator*(double scalar)
 {
     vec result(size);
-    for (int i = 0; i < size; ++i)
+    for (int i = 0; i < size; i++)
     {
         result.arr1[i] = arr1[i] * scalar;
     }
@@ -492,7 +564,7 @@ vec<T> vec<T>::operator*(double scalar)
 }
 
 template <typename T>
-vec<T>& vec<T>::operator/=(double scalar)
+vec<T> &vec<T>::operator/=(double scalar)
 {
     for (int i = 0; i < size; ++i)
     {
@@ -505,7 +577,7 @@ template <typename T>
 vec<T> vec<T>::operator/(double scalar) const
 {
     vec<T> result(size);
-    for (int i = 0; i < size; ++i)
+    for (int i = 0; i < size; i++)
     {
         result.arr1[i] = arr1[i] / scalar;
     }
@@ -524,20 +596,6 @@ void vec<T>::display()
     }
     std::cout << std::endl;
     std::cout << "-------------------------------------------" << std::endl;
-}
-
-template <typename T>
-void vec<T>::display(std::string name)
-{
-    std::cout << std::fixed << std::setprecision(2);
-    std::cout<<"displaying vector :"<<name<<std::endl;
-    for (int i = 0; i < size; i++)
-    {
-        std::cout << arr1[i] << "\t";
-    }
-    std::cout << std::endl;
-    std::cout << "-------------------------------------------" << std::endl;
-
 }
 
 template <typename T>
@@ -597,6 +655,19 @@ vec<T>& vec<T>::operator=(vec&& other) noexcept
     return *this;
 }
 
+template <typename T>
+void vec<T>::clear()
+{
+    (*this) = 0;
+}
 
+template <typename T>
+void vec<T>::Scatter(double lc , double value)
+{
+    int i = (int)lc;
+    double di = lc-i;
+    arr1[i] += value*(1-di);
+    arr1[i+1] += value*(di);
+}
 
 #endif

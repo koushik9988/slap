@@ -1,10 +1,10 @@
 #ifndef _SOLVERS_
 #define _SOLVERS_
 
-#include "linalg.h"
-#include "function.h"
 #include <vector>
 #include <stdexcept>
+#include "linalg.h"
+#include "function.h"
 
 template<typename T>
 class Matrix;

@@ -1,16 +1,20 @@
 #ifndef _FUNCTION_
 #define _FUNCTION_
 
-#include "linalg.h"
 #include <iostream>
 #include <stdexcept>
 #include <cmath>
+#include "linalg.h"
 
-
-// Forward declaration of vec and Matrix classes
+/**
+ * @brief Template class for a vector.
+ */
 template <typename T>
 class vec;
 
+/**
+ * @brief Template class for a matrix.
+ */
 template <typename T>
 class Matrix;
 
@@ -205,20 +209,5 @@ Matrix<T> unflatten(vec<T> v)
     }
     return M;
 }
-
-
-/*
-// Explicit template instantiation for double
-template class vec<double>;
-template class Matrix<double>;
-template vec<double> slice(vec<double> &v, int start, int end);
-template Matrix<double> slice(Matrix<double> &M, int row_start, int row_end, int col_start, int col_end);
-template Matrix<double> diagonalPreconditioner(Matrix<double> &M);
-template Matrix<double> transpose(Matrix<double> &A);
-template void symmetryCheck(Matrix<double> &A);
-template vec<double> flatten(Matrix<double> M);
-template Matrix<double> unflatten(vec<double> v, int row, int col);
-template Matrix<double> unflatten(vec<double> v);
-*/
 
 #endif // _FUNCTION_
