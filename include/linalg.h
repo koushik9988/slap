@@ -83,6 +83,7 @@ public:
      */
     T& operator()(int n, int m);
     void display();
+    void display(std::string name);
 
     Matrix(Matrix&& other) noexcept;
     Matrix& operator=(Matrix&& other) noexcept;
@@ -150,6 +151,7 @@ public:
     vec<T> operator/(double scalar) const;
     vec<T> operator*(double scalar);
     void display();
+    void display(std::string name);
     void set(double value);
     T& operator()(int n);
     double norm();
@@ -433,6 +435,25 @@ Matrix<T>& Matrix<T>::operator=(Matrix&& other) noexcept
     return *this;
 }
 
+
+template <typename T>
+ 
+
+void Matrix<T>::display(std::string name)
+{
+    std::cout << std::fixed << std::setprecision(2);
+    std::cout << "displaying matrix :"<<name<< std::endl;
+    for (int i = 0; i < row; i++)
+    {
+        for (int j = 0; j < col; j++)
+        {
+            std::cout << arr2[i][j] << "\t";
+        }
+        std::cout << std::endl;
+    }
+    std::cout << "-------------------------------------------" << std::endl;
+}
+
 // ------------------------ Vector ------------------------
 /*
 Declaration of methods of vector class
@@ -668,6 +689,23 @@ void vec<T>::Scatter(double lc , double value)
     double di = lc-i;
     arr1[i] += value*(1-di);
     arr1[i+1] += value*(di);
+}
+
+
+template <typename T>
+void vec<T>::display(std::string name)
+{
+    std::cout << std::fixed << std::setprecision(2);
+ 
+    std::cout<<"displaying vector :"<<name<<std::endl;
+ 
+    for (int i = 0; i < size; i++)
+
+    {
+        std::cout << arr1[i] << "\t";
+    }
+    std::cout << std::endl;
+    std::cout << "-------------------------------------------" << std::endl;
 }
 
 #endif
