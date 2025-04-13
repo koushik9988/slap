@@ -47,12 +47,16 @@ public:
      * @return Reference to the assigned matrix.
      */
     Matrix& operator=(Matrix<T> &other);
+
+    Matrix& operator=(const T &value);
+
     /**
      * @brief Addition operator for Matrix.
      * @param other The matrix to add.
      * @return A new matrix which is the sum of the current matrix and the other matrix.
      */
     Matrix<T> operator+(const Matrix<T> &other) const;
+    Matrix<T>& operator+=(const Matrix<T> &other);
     /**
      * @brief Subtraction operator for Matrix.
      * @param other The matrix to subtract.
@@ -65,6 +69,8 @@ public:
      * @return A new matrix which is the product of the current matrix and the other matrix.
      */
     Matrix<T> operator*(const Matrix<T> &other)const;
+    Matrix<T> &operator/=(double scalar);
+    Matrix<T> operator*(double scalar);
     /**
      * @brief Multiplication operator for Matrix and vector.
      * @param v The vector to multiply.
@@ -252,6 +258,24 @@ Matrix<T> &Matrix<T>::operator=(Matrix<T> &other)
     return *this;
 }
 
+
+///
+
+template <typename T>
+Matrix<T> &Matrix<T>::operator=(const T &value)
+{
+    for (int i = 0; i < row; ++i)
+    {
+        for (int j = 0; j < col; ++j)
+        {
+            arr2[i][j] = value;
+        }
+    }
+    return *this;
+}
+
+///
+
 template <typename T>
 Matrix<T> Matrix<T>::operator+(const Matrix<T> &other)const
 {
@@ -269,6 +293,25 @@ Matrix<T> Matrix<T>::operator+(const Matrix<T> &other)const
     }
     return result;
 }
+
+
+template <typename T>
+Matrix<T>& Matrix<T>::operator+=(const Matrix<T> &other)
+{
+    if (row != other.row || col != other.col)
+    {
+        throw std::invalid_argument("Matrices must have the same dimensions for addition");
+    }
+    for (int i = 0; i < row; ++i)
+    {
+        for (int j = 0; j < col; ++j)
+        {
+            arr2[i][j] += other.arr2[i][j];
+        }
+    }
+    return *this;
+}
+
 
 template <typename T>
 Matrix<T> Matrix<T>::operator-(const Matrix<T> &other)const
@@ -309,6 +352,37 @@ Matrix<T> Matrix<T>::operator*(const Matrix<T> &other)const
     }
     return result;
 }
+
+//
+template <typename T>
+Matrix<T> &Matrix<T>::operator/=(double scalar)
+{
+    for (int i = 0; i < row; ++i)
+    {
+        for (int j = 0; j < col; ++j)
+        {
+            arr2[i][j] /= scalar;
+        }
+    }
+    return *this;
+}
+//
+template <typename T>
+Matrix<T> Matrix<T>::operator*(double scalar)
+{
+
+    Matrix result(row,col);
+    for (int i = 0; i < row; i++)
+    {
+        for (int j = 0; j < col; j++)
+        {
+            result.arr2[i][j] = arr2[i][j] * scalar;
+        }
+    }
+    return result;
+}
+
+//
 
 template <typename T>
 vec<T> Matrix<T>::operator*(const vec<T> &v)const
@@ -437,8 +511,6 @@ Matrix<T>& Matrix<T>::operator=(Matrix&& other) noexcept
 
 
 template <typename T>
- 
-
 void Matrix<T>::display(std::string name)
 {
     std::cout << std::fixed << std::setprecision(2);
@@ -454,6 +526,7 @@ void Matrix<T>::display(std::string name)
     std::cout << "-------------------------------------------" << std::endl;
 }
 
+
 // ------------------------ Vector ------------------------
 /*
 Declaration of methods of vector class
@@ -461,7 +534,7 @@ Declaration of methods of vector class
 template <typename T>
 vec<T>::vec(int size) : size(size)
 {
-    arr1 = new T[size];
+    arr1 = new double[size];
     for( int i =0 ; i < size ; i++)
     {
         arr1[i] = 0;
@@ -470,7 +543,7 @@ vec<T>::vec(int size) : size(size)
 
 //dafault constructor
 template <typename T>
-vec<T>::vec() : size(0),arr1(nullptr) {}
+vec<T>::vec() : arr1(nullptr), size(0) {}
 
 
 //copy constructor
@@ -690,6 +763,7 @@ void vec<T>::Scatter(double lc , double value)
     arr1[i] += value*(1-di);
     arr1[i+1] += value*(di);
 }
+
 
 
 template <typename T>
